@@ -53,8 +53,14 @@ func OpenDrive(drive string) error {
 	device.DriveLetter = drive
 
 	// TODO: Open a connection to the drive and handle the connection
+	err := device.Open()
 
 	// TODO: Check for errors and return accordingly
+	if err != nil {
+		log.Println("Could not open the device please make sure you selected correct drive")
+		return err
+
+	}
 
 	return nil
 }
@@ -91,4 +97,11 @@ func (d *PhisonDevice) SendCommand(handle SafeFileHandle, cmd []byte, data []byt
 
 	// TODO: Implement the SendCommand method
 	return ret
+}
+
+// Open is responsible for opening a connection
+func (d *PhisonDevice) Open() error {
+
+	// TODO: open a connection
+	return nil
 }
