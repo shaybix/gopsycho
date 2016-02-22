@@ -18,7 +18,7 @@ how far we could push our exploitation.
 
 - [ ]   Read and open drive (for linux /dev/)
 - [ ]   Dump the firmware
-- [ ]    
+- [ ]   some other things...     
 
 
 ----------------------------------------------------------------------------------------
