@@ -43,7 +43,7 @@ func main() {
 	// Try to read from the USB drive
 	handle, err := OpenDrive(*drive)
 	if err != nil {
-		log.Println("Could not read from drive", err)
+		log.Println("OpenDrive()", err)
 	}
 
 	// Try to dump (write) firmware to the drive
@@ -70,7 +70,7 @@ func OpenDrive(drive string) (*os.File, error) {
 
 	// TODO: Check for errors and return accordingly
 	if err != nil {
-		log.Println("Could not open the device please make sure you selected correct drive")
+		log.Println("Could not open the device: ", err)
 		return nil, err
 	}
 
@@ -109,9 +109,9 @@ func (d *PhisonDevice) Open() (*os.File, error) {
 	// TODO: open a connection
 	// However getting a read-only filesystem error which I need to look into
 
-	handle, err := os.OpenFile(d.DriveLetter, os.O_RDONLY, os.ModeDevice)
+	handle, err := os.OpenFile(d.DriveLetter, os.O_RDWR, 0777)
 	if err != nil {
-		log.Println("Could not open file to the device: ")
+		log.Println("Could not open file to the device: ", err)
 		return nil, err
 
 	}
@@ -128,23 +128,82 @@ func (d *PhisonDevice) JumpToBootMode() error {
 	return nil
 }
 
+// ExecuteImage executes the burner image unto the device
 func (d *PhisonDevice) ExecuteImage() error {
 
 	// TODO: Execute the burner image
 	return nil
 }
 
+// JumpToPRAM ....
 func (d *PhisonDevice) JumpToPRAM() error {
 
-	// TODO:
+	// TODO: Don't know exactly yet what this method does :p
 	return nil
+
+}
+
+// GetInfo will get relevant information from the device and print it
+// to the console
+func (d *PhisonDevice) GetInfo() error {
+
+	// TODO: Read and print the information of the device
+	fmt.Println("Gathering information....")
+	fmt.Println("Reported chip type: ", d.GetChipType())
+	fmt.Println("Reported chip ID: ", d.GetChipID())
+	fmt.Println("Reported firmware version: ", d.GetFirmwareVersion())
+
+	return nil
+
+}
+
+// GetChipType ...
+func (d *PhisonDevice) GetChipType() uint {
+
+	// TODO: Fetch the Chip type
+	var ret uint
+	var info = d.RequestVendorInfo()
+	if info != nil {
+		//TODO: some more logic
+	}
+	return ret
+}
+
+// GetChipID ...
+func (d *PhisonDevice) GetChipID() string {
+
+	// TODO: Fetch the Chip type
+
+	return ""
+
+}
+
+// GetFirmwareVersion ...
+func (d *PhisonDevice) GetFirmwareVersion() string {
+
+	// TODO: Fetch the Chip type
+
+	return ""
+
 }
 
 // SendCommand sends data across to the device
-func (d *PhisonDevice) SendCommand(handle SafeFileHandle, cmd []byte, data []byte, bytesExpected int) []byte {
+func (d *PhisonDevice) SendCommand(handle SafeFileHandle, bytesExpected int) []byte {
 
 	var ret []byte
 
 	// TODO: Implement the SendCommand method
+	return ret
+}
+
+func (d *PhisonDevice) RequestVendorInfo() []byte {
+
+	var data = d.SendCommand([]byte{0x06, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01}, 512+16)
+
+	var ret []byte
+	if data != nil {
+
+		// TODO: convert content in data into []byte assign to ret to be returned.
+	}
 	return ret
 }
