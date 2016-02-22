@@ -12,6 +12,27 @@ The main purpose of this project is educational, to understand how BadUSB truly 
 and secondarily how psychson is exploiting this vulnerable, and tertiary the goal is to 
 how far we could push our exploitation.
 
+Intentionally a lot of the function names, and variable names were kept in order for it 
+to be as close as possible to the c# code. This will mean that the code may divert somewhat 
+from Go's idiomatic way of doing things. :)
+
+
+Sample usage from commandline: 
+
+```
+gopsycho --drive=/dev/sdb --action=DumpFirmware --burner=burnerfile --firmware=customfirmware
+
+```
+--------------------------------------------------------------------------------------
+
+###### GOALS
+
+- [ ]   Dumping of firmware in Linux environment
+- [ ]   GUI implementation 
+- [ ]   GUI Firmware editor
+- [ ]   Implementation of all actions
+
+
 ---------------------------------------------------------------------------------------
 
 ###### TODO 
