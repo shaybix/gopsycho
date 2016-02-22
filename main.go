@@ -3,7 +3,10 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io"
 	"log"
+
+	"github.com/huin/goserial"
 )
 
 // Commandline flags/arguments specified
@@ -33,7 +36,7 @@ func main() {
 	}
 
 	// Try to read from the USB drive
-	err := OpenDrive(*drive)
+	handle, err := OpenDrive(*drive)
 	if err != nil {
 		log.Println("Could not read from drive", err)
 	}
@@ -43,26 +46,27 @@ func main() {
 	if err != nil {
 		log.Println("Could not dump the firmware")
 	}
+
+	log.Println(handle)
 }
 
 // OpenDrive opens a connection with the device
-func OpenDrive(drive string) error {
+func OpenDrive(drive string) (*io.ReadWriteCloser, error) {
 	defer CloseDrive()
 
 	device := new(PhisonDevice)
 	device.DriveLetter = drive
 
 	// TODO: Open a connection to the drive and handle the connection
-	err := device.Open()
+	handle, err := device.Open()
 
 	// TODO: Check for errors and return accordingly
 	if err != nil {
 		log.Println("Could not open the device please make sure you selected correct drive")
-		return err
-
+		return nil, err
 	}
 
-	return nil
+	return handle, nil
 }
 
 // CloseDrive handles the graceful closing of the connection with the device
@@ -100,8 +104,14 @@ func (d *PhisonDevice) SendCommand(handle SafeFileHandle, cmd []byte, data []byt
 }
 
 // Open is responsible for opening a connection
-func (d *PhisonDevice) Open() error {
+func (d *PhisonDevice) Open() (*io.ReadWriteCloser, error) {
 
 	// TODO: open a connection
-	return nil
+	c := &goserial.Config{Name: "/dev/sdb"}
+	handle, err := goserial.OpenPort(c)
+	if err != nil {
+		log.Println("Could not establish a connection with the usb port")
+		return nil, err
+	}
+	return &handle, nil
 }
