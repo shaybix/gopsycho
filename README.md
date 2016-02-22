@@ -46,7 +46,7 @@ gopsycho --drive=/dev/sdb --action=DumpFirmware --burner=burnerfile --firmware=c
 
 #### Authors
 
-* Aboo <shaybix> Shayba
+* Aboo "shaybix" Shayba
 
 
 #### Contributors
