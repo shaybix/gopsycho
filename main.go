@@ -3,22 +3,26 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io"
 	"log"
-
-	"github.com/huin/goserial"
+	"os"
+	"syscall"
 )
 
 // Commandline flags/arguments specified
 var (
-	drive    = flag.String("drive", "", "Select the drive the USB is connected to")
-	action   = flag.String("action", "DumpFirmware", "Default: DumpFirmware (no other is supported at the moment)")
+	drive = flag.String("drive", "", "Select the drive the USB is connected to")
+	// Change of focus on the setting the USB into bootmode first before implementing
+	// other actions like DumpFirmware
+	//action   = flag.String("action", "DumpFirmware", "Default: DumpFirmware (no other is supported at the moment)")
+	action   = flag.String("action", "SetBootMode", "Default: SetBootMode (no other is supported at the moment)")
 	burner   = flag.String("burner", "", "Path to the burner file")
 	firmware = flag.String("firmware", "", "Path to the firmware file")
 )
 
+// SafeFileHandle of type []byte
 type SafeFileHandle []byte
 
+// PhisonDevice of type struct
 type PhisonDevice struct {
 	DriveLetter string
 }
@@ -42,16 +46,16 @@ func main() {
 	}
 
 	// Try to dump (write) firmware to the drive
-	err = DumpFirmware(*firmware)
-	if err != nil {
-		log.Println("Could not dump the firmware")
-	}
+	//err = DumpFirmware(*firmware)
+	//if err != nil {
+	//	log.Println("Could not dump the firmware")
+	//}
+	fmt.Println(&handle)
 
-	log.Println(handle)
 }
 
 // OpenDrive opens a connection with the device
-func OpenDrive(drive string) (*io.ReadWriteCloser, error) {
+func OpenDrive(drive string) (*os.File, error) {
 	defer CloseDrive()
 
 	device := new(PhisonDevice)
@@ -76,25 +80,26 @@ func CloseDrive() {
 }
 
 // DumpFirmware writes the custom firmware to the device
-func DumpFirmware(firmware string) error {
-	var address int = 0
-	var data = make([]byte, 0x32400)
-	var header = []byte{0x42, 0x74, 0x50, 0x72, 0x61, 0x6D, 0x43, 0x64, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x14, 0x10, 0x0B, 0x18}
+//func DumpFirmware(firmware string) error {
+//	var address int = 0
+//	var data = make([]byte, 0x32400)
+//	var header = []byte{0x42, 0x74, 0x50, 0x72, 0x61, 0x6D, 0x43, 0x64, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x14, 0x10, 0x0B, 0x18}
+//
+//	copy(data, header)
+//
+// TODO: loop through the data array
 
-	copy(data, header)
+// TODO: While looping through the data send the data through
 
-	// TODO: loop through the data array
+// FIXME: remove these fmt.Println once you have implemented this function
+//	fmt.Println(address)
+//	fmt.Println(header)
+//	fmt.Println(data)
+//
+//	return nil
+//}
 
-	// TODO: While looping through the data send the data through
-
-	// FIXME: remove these fmt.Println once you have implemented this function
-	fmt.Println(address)
-	fmt.Println(header)
-	fmt.Println(data)
-
-	return nil
-}
-
+// SendCommand sends data across to the device
 func (d *PhisonDevice) SendCommand(handle SafeFileHandle, cmd []byte, data []byte, bytesExpected int) []byte {
 
 	var ret []byte
@@ -104,14 +109,26 @@ func (d *PhisonDevice) SendCommand(handle SafeFileHandle, cmd []byte, data []byt
 }
 
 // Open is responsible for opening a connection
-func (d *PhisonDevice) Open() (*io.ReadWriteCloser, error) {
+func (d *PhisonDevice) Open() (*os.File, error) {
 
 	// TODO: open a connection
-	c := &goserial.Config{Name: "/dev/sdb"}
-	handle, err := goserial.OpenPort(c)
+	// However getting a read-only filesystem error which I need to look into
+
+	handle, err := os.OpenFile(d.DriveLetter, syscall.O_RDWR, os.ModeDevice)
 	if err != nil {
-		log.Println("Could not establish a connection with the usb port")
+		log.Println("Could not open file to the device: ")
 		return nil, err
+
 	}
-	return &handle, nil
+
+	fmt.Println(handle)
+	return handle, nil
+
+}
+
+// JumpToBootMode sets the device to boot mode
+func (d *PhisonDevice) JumpToBootMode() error {
+
+	// TODO: SendCommand data to device to set it to boot mode
+	return nil
 }
