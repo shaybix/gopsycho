@@ -27,7 +27,9 @@ gopsycho --drive=/dev/sdb --action=DumpFirmware --burner=burnerfile --firmware=c
 
 ###### GOALS
 
-- [ ]   Dumping of firmware in Linux environment
+- [ ]   Communicate with the USB device and obtain device information
+- [ ]   Read and write from and to the device
+....
 - [ ]   GUI implementation 
 - [ ]   GUI Firmware editor
 - [ ]   Implementation of all actions
@@ -37,10 +39,14 @@ gopsycho --drive=/dev/sdb --action=DumpFirmware --burner=burnerfile --firmware=c
 
 ###### TODO 
 
-- [ ]   Read and open drive (for linux /dev/)
-- [ ]   Dump the firmware
-- [ ]   some other things...     
-
+- [ ]   Ability to read and write to USB drive (for linux /dev/)
+- [ ]   GetInfo()
+- [ ]   SetBootMode()
+- [ ]   SendExecutable()
+- [ ]   DumpFirmware()
+- [ ]   SetPassword()
+- [ ]   GetNumLBAs()
+- [ ]   SendFirmware()
 
 ----------------------------------------------------------------------------------------
 
