@@ -28,6 +28,7 @@ type PhisonDevice struct {
 	DriveLetter string
 }
 
+// main
 func main() {
 
 	flag.Parse()
@@ -106,7 +107,7 @@ func CloseDrive() {
 // Open is responsible for opening a connection
 func (d *PhisonDevice) Open() (*os.File, error) {
 
-	// TODO: open a connection
+	// TODO : open a connection
 	// However getting a read-only filesystem error which I need to look into
 
 	handle, err := os.OpenFile(d.DriveLetter, os.O_RDWR, 0777)
@@ -187,7 +188,12 @@ func (d *PhisonDevice) GetFirmwareVersion() string {
 
 }
 
-// SendCommand sends data across to the device
+// SendCommand sends data across to the device however the shown below is private in the c# code
+// There are overloaded methods in this case, and must consider how to perhaps factor out
+// the other two methods. There are:
+// 	SendCommand(cmd []byte, bytesExpected int) []byte
+// 	SendCommand(cmd []byte)
+// 	SendCommand(cmd, data []byte)
 func (d *PhisonDevice) SendCommand(handle SafeFileHandle, bytesExpected int) []byte {
 
 	var ret []byte
