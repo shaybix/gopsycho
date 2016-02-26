@@ -4,7 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"os"
+	"syscall"
 )
 
 // Commandline flags/arguments specified
@@ -52,15 +52,15 @@ func main() {
 	//if err != nil {
 	//	log.Println("Could not dump the firmware")
 	//}
-	fmt.Println(handle)
 
+	fmt.Println(*handle)
 }
 
 // OpenDrive opens a connection with the device
 // Look into whether there is a better way of doing this
 // is it necessarilly to call another Open() method within this function?
 // However in order to stick to the way done in the original Psychson code keep it as it is.
-func OpenDrive(drive string) (*os.File, error) {
+func OpenDrive(drive string) (*int, error) {
 	defer CloseDrive()
 
 	device := new(PhisonDevice)
@@ -105,19 +105,25 @@ func CloseDrive() {
 //}
 
 // Open is responsible for opening a connection
-func (d *PhisonDevice) Open() (*os.File, error) {
+func (d *PhisonDevice) Open() (*int, error) {
 
 	// TODO : open a connection
 	// However getting a read-only filesystem error which I need to look into
 
-	handle, err := os.OpenFile(d.DriveLetter, os.O_RDWR, 0777)
+	//handle, err := os.OpenFile(d.DriveLetter, os.O_RDWR, 0777)
+	//if err != nil {
+	//log.Println("Could not open file to the device: ", err)
+	//return nil, err
+
+	//}
+
+	handle, err := syscall.Open("/dev/sdb", syscall.O_RDONLY, 0777)
+
 	if err != nil {
-		log.Println("Could not open file to the device: ", err)
+		log.Println("syscall.Open() tried : ")
 		return nil, err
-
 	}
-
-	return handle, nil
+	return &handle, nil
 
 }
 
