@@ -3,8 +3,13 @@ package main
 import (
 	"fmt"
 	"log"
-	"syscall"
+	"os"
 )
+
+// SafeFileHandle of type []byte
+// might not be neccessarily as it was a type in Windows for safe handling of files
+// however keep it for now for ease of understanding code
+type SafeFileHandle []byte
 
 // PhisonDevice of type struct
 type PhisonDevice struct {
@@ -12,25 +17,28 @@ type PhisonDevice struct {
 }
 
 // Open is responsible for opening a connection
-func (d *PhisonDevice) Open() (*int, error) {
+// returns a file descriptor
+func (d *PhisonDevice) Open() (*os.File, error) {
 
 	// TODO : open a connection
 	// However getting a read-only filesystem error which I need to look into
 
-	//handle, err := os.OpenFile(d.DriveLetter, os.O_RDWR, 0777)
-	//if err != nil {
-	//log.Println("Could not open file to the device: ", err)
-	//return nil, err
+	handle, err := os.OpenFile(d.DriveLetter, os.O_RDWR, 0777)
+	if err != nil {
+		log.Println("Could not open file to the device: ", err)
+		return nil, err
 
+	}
+
+	// returns a file descriptor
+	//handle, err := syscall.Open("/dev/sdb", syscall.O_RDONLY, 0777)
+
+	//if err != nil {
+	//	log.Println("syscall.Open() tried : ")
+	//	return nil, err
 	//}
 
-	handle, err := syscall.Open("/dev/sdb", syscall.O_RDONLY, 0777)
-
-	if err != nil {
-		log.Println("syscall.Open() tried : ")
-		return nil, err
-	}
-	return &handle, nil
+	return handle, nil
 
 }
 
