@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"os"
 )
 
 // Commandline flags/arguments specified
@@ -16,11 +17,6 @@ var (
 	burner   = flag.String("burner", "", "Path to the burner file")
 	firmware = flag.String("firmware", "", "Path to the firmware file")
 )
-
-// SafeFileHandle of type []byte
-// might not be neccessarily as it was a type in Windows for safe handling of files
-// however keep it for now for ease of understanding code
-type SafeFileHandle []byte
 
 // main
 func main() {
@@ -54,7 +50,7 @@ func main() {
 // Look into whether there is a better way of doing this
 // is it necessarilly to call another Open() method within this function?
 // However in order to stick to the way done in the original Psychson code keep it as it is.
-func OpenDrive(drive string) (*int, error) {
+func OpenDrive(drive string) (*os.File, error) {
 	defer CloseDrive()
 
 	device := new(PhisonDevice)
