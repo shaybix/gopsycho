@@ -1,4 +1,4 @@
-# gopsycho
+# gopsycho = [ABDANDONED PROJECT]
 Go implementation of the Psychson code with support for Linux.
 
 
